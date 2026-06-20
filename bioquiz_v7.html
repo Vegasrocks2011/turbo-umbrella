@@ -1,0 +1,723 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.scr{padding:1.25rem 0;max-width:660px;display:none}
+.scr.active{display:block}
+h1{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+h2{font-size:18px;font-weight:500;color:var(--color-text-primary)}
+h3{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+p{font-size:14px;color:var(--color-text-secondary);line-height:1.6}
+.btn{display:inline-block;padding:9px 20px;font-size:14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);cursor:pointer;font-family:var(--font-sans);transition:background 0.15s}
+.btn:hover{background:var(--color-background-secondary)}
+.btn-green{background:#1D9E75;color:#E1F5EE;border-color:#0F6E56}
+.btn-green:hover{background:#0F6E56}
+.btn-purple{background:#7F77DD;color:#EEEDFE;border-color:#534AB7}
+.btn-purple:hover{background:#534AB7}
+.btn-amber{background:#BA7517;color:#FAEEDA;border-color:#854F0B}
+.btn-sm{padding:6px 14px;font-size:13px}
+input{width:100%;padding:9px 12px;font-size:14px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:var(--font-sans);margin-bottom:10px;outline:none}
+input:focus{border-color:#7F77DD}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem}
+.pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500}
+.pill-green{background:#E1F5EE;color:#085041}
+.pill-purple{background:#EEEDFE;color:#3C3489}
+.pill-amber{background:#FAEEDA;color:#633806}
+.pill-gray{background:#F1EFE8;color:#444441}
+.pill-blue{background:#E6F1FB;color:#0C447C}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:1rem 0}
+.stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;text-align:center}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:2px}
+.stat-val{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.xp-track{height:8px;background:var(--color-background-secondary);border-radius:4px;overflow:hidden;margin:6px 0}
+.xp-fill{height:100%;border-radius:4px;transition:width 0.5s ease}
+.err{font-size:13px;color:#A32D2D;min-height:18px;margin-top:2px}
+canvas{display:block;border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary)}
+.q-wrap{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem;position:relative;overflow:hidden}
+.q-accent{position:absolute;left:0;top:0;bottom:0;width:4px}
+.q-text{font-size:15px;color:var(--color-text-primary);line-height:1.6;margin-bottom:1rem;padding-left:8px}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opt-btn{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--border-radius-md);cursor:pointer;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);transition:all 0.15s;text-align:left;width:100%}
+.opt-btn:hover:not([disabled]){border-color:#7F77DD;background:#EEEDFE}
+.opt-btn.correct{border-color:#1D9E75!important;background:#E1F5EE!important}
+.opt-btn.incorrect{border-color:#E24B4A!important;background:#FCEBEB!important}
+.opt-letter{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0;margin-top:1px}
+.opt-A .opt-letter{background:#E6F1FB;color:#0C447C}
+.opt-B .opt-letter{background:#EEEDFE;color:#3C3489}
+.opt-C .opt-letter{background:#E1F5EE;color:#085041}
+.opt-D .opt-letter{background:#FAEEDA;color:#633806}
+.opt-btn.correct .opt-letter{background:#1D9E75!important;color:#E1F5EE!important}
+.opt-btn.incorrect .opt-letter{background:#E24B4A!important;color:#FCEBEB!important}
+.opt-text{font-size:13px;color:var(--color-text-primary);line-height:1.4}
+.fb-box{margin-top:10px;padding:10px 12px;border-radius:var(--border-radius-md);font-size:13px;line-height:1.5}
+.fb-ok{background:#E1F5EE;color:#085041}
+.fb-no{background:#FCEBEB;color:#791F1F}
+.prog-bar{height:6px;background:var(--color-background-secondary);border-radius:3px;margin-bottom:1rem;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.3s}
+.topic-card{display:flex;align-items:center;gap:14px;padding:1rem 1.25rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);margin-bottom:10px;cursor:pointer;transition:border-color 0.15s,background 0.15s}
+.topic-card:hover:not(.locked){border-color:#7F77DD;background:#EEEDFE}
+.topic-card.locked{opacity:0.55;cursor:not-allowed}
+.t-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.level-chip{display:inline-flex;align-items:center;gap:5px;background:#EEEDFE;color:#3C3489;padding:4px 12px;border-radius:20px;font-size:13px;font-weight:500}
+.streak-banner{padding:10px 14px;border-radius:var(--border-radius-md);background:#FAEEDA;color:#633806;font-size:13px;font-weight:500;margin-bottom:1rem;animation:popIn 0.3s ease}
+@keyframes popIn{0%{transform:scale(0.92);opacity:0}100%{transform:scale(1);opacity:1}}
+.mg-wrap{text-align:center;padding:2rem 1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);margin-bottom:1rem}
+.trophy-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:1rem 0}
+.trophy-cell{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 6px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);text-align:center}
+.trophy-cell.earned{border-color:#BA7517;background:#FAEEDA}
+.t-emoji{font-size:26px;filter:grayscale(1) opacity(0.25);transition:all 0.3s}
+.trophy-cell.earned .t-emoji{filter:none}
+.t-name{font-size:10px;color:var(--color-text-secondary);line-height:1.3}
+.trophy-cell.earned .t-name{color:#633806;font-weight:500}
+.round-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.rb-1{background:#E1F5EE;color:#085041}
+.rb-2{background:#E6F1FB;color:#0C447C}
+.rb-3{background:#EEEDFE;color:#3C3489}
+.rb-4{background:#FAEEDA;color:#633806}
+.rb-5{background:#FCEBEB;color:#791F1F}
+.gate-box{padding:1.25rem;border-radius:var(--border-radius-lg);border:2px solid #BA7517;background:#FAEEDA;text-align:center;margin:1rem 0}
+.info-note{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary);padding:8px 12px;border-radius:var(--border-radius-md);margin-top:12px;line-height:1.5}
+</style>
+
+<div id="s-login" class="scr active">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+    <div style="width:36px;height:36px;border-radius:50%;background:#EEEDFE;display:flex;align-items:center;justify-content:center;font-size:18px">🧬</div>
+    <h1>BioRevise</h1>
+  </div>
+  <p style="margin-bottom:1.5rem">IGCSE Biology · Edexcel Modular · Unit 1</p>
+  <div class="card" style="max-width:380px">
+    <h3 style="margin-bottom:1rem">Sign in or create account</h3>
+    <label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:4px">Username</label>
+    <input id="lu" placeholder="e.g. alex2026" autocomplete="off"/>
+    <label style="font-size:12px;color:var(--color-text-secondary);display:block;margin-bottom:4px">PIN (4 digits)</label>
+    <input id="lp" type="password" placeholder="••••" maxlength="4"/>
+    <div class="err" id="lerr"></div>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-green" onclick="doLogin()">sign in</button>
+      <button class="btn btn-purple" onclick="doReg()">create account</button>
+    </div>
+    <div class="info-note">Progress saves on this device. Export to GitHub Pages for cross-device use.</div>
+  </div>
+</div>
+
+<div id="s-dash" class="scr">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.25rem;flex-wrap:wrap;gap:8px">
+    <div><h1 id="d-hello">Hey!</h1><p id="d-sub"></p></div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="level-chip">⭐ <span id="d-level">Novice</span></span>
+      <button class="btn btn-sm" onclick="showTrophies()">🏆 cabinet</button>
+      <button class="btn btn-sm" onclick="doLogout()">sign out</button>
+    </div>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-label">XP</div><div class="stat-val" id="d-xp">0</div></div>
+    <div class="stat-box"><div class="stat-label">Streak</div><div class="stat-val" id="d-streak">0🔥</div></div>
+    <div class="stat-box"><div class="stat-label">Trophies</div><div class="stat-val" id="d-trophies">0/10</div></div>
+    <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-val" id="d-acc">–</div></div>
+  </div>
+  <div style="margin-bottom:1.25rem">
+    <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+      <span style="font-size:12px;color:var(--color-text-secondary)" id="d-xp-label">XP to next level</span>
+      <span style="font-size:12px;font-weight:500;color:var(--color-text-primary)" id="d-xp-frac">0/200</span>
+    </div>
+    <div class="xp-track"><div class="xp-fill" id="d-xp-bar" style="width:0%;background:#7F77DD"></div></div>
+  </div>
+  <div style="border-top:0.5px solid var(--color-border-tertiary);padding-top:1.25rem">
+    <h2 style="margin-bottom:1rem">Choose your topic</h2>
+    <div class="topic-card" id="tc1" onclick="startGame()">
+      <div class="t-icon" style="background:#E1F5EE;color:#0F6E56">🔬</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px;flex-wrap:wrap">
+          <h3>Topic 1</h3>
+          <span class="pill pill-green">100 questions</span>
+          <span class="pill pill-blue">5 rounds</span>
+        </div>
+        <p style="margin-bottom:6px">Nature and variety of living organisms</p>
+        <div id="t1-pills" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px"></div>
+        <div class="xp-track"><div class="xp-fill" id="t1-bar" style="width:0%;background:#1D9E75"></div></div>
+      </div>
+      <span style="color:var(--color-text-secondary);font-size:18px">›</span>
+    </div>
+    <div class="topic-card locked">
+      <div class="t-icon" style="background:#F1EFE8;color:#888780">🧫</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+          <h3>Topic 2</h3><span class="pill pill-amber">locked</span>
+        </div>
+        <p>Complete all 5 rounds of Topic 1 to unlock</p>
+      </div>
+      <span>🔒</span>
+    </div>
+  </div>
+</div>
+
+<div id="s-trophies" class="scr">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem">
+    <div><h2>Trophy cabinet</h2><p id="trophy-count-label">0 of 10 earned</p></div>
+    <button class="btn btn-sm" onclick="showDash()">← back</button>
+  </div>
+  <div class="trophy-grid" id="trophy-grid"></div>
+  <div style="margin-top:1rem;padding:1rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg)">
+    <h3 style="margin-bottom:8px;font-size:14px">How to earn trophies</h3>
+    <p style="font-size:12px;line-height:2" id="trophy-hints"></p>
+  </div>
+</div>
+
+<div id="s-quiz" class="scr">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:8px">
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="pill pill-green">Topic 1</span>
+      <span id="qhud-round-badge" class="round-badge rb-1">Round 1</span>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pill pill-amber" id="qhud-xp">XP: 0</span>
+      <span class="pill pill-gray" id="qhud-streak">🔥 0</span>
+      <button class="btn btn-sm" onclick="exitToD()">✕ exit</button>
+    </div>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="q-prog" style="width:0%"></div></div>
+  <div id="streak-wrap"></div>
+  <div id="q-area"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem">
+    <button class="btn btn-sm" id="q-prev" onclick="qNav(-1)">← prev</button>
+    <span style="font-size:13px;color:var(--color-text-secondary)" id="q-count">1/20</span>
+    <button class="btn btn-sm" id="q-next" onclick="qNav(1)">next →</button>
+  </div>
+</div>
+
+<div id="s-round-result" class="scr">
+  <div style="text-align:center;padding:1.5rem 0 1rem">
+    <div style="font-size:40px;margin-bottom:8px" id="rr-emoji"></div>
+    <h2 id="rr-title"></h2>
+    <p id="rr-score" style="font-size:16px;margin-top:4px;font-weight:500"></p>
+    <p id="rr-msg" style="margin-top:6px"></p>
+  </div>
+  <div id="rr-gate" class="gate-box" style="display:none">
+    <div style="font-size:28px;margin-bottom:8px">🔒</div>
+    <h3 style="margin-bottom:6px">Need 80% to advance</h3>
+    <p id="rr-gate-msg"></p>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-label">Correct</div><div class="stat-val" id="rr-correct">0</div></div>
+    <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val" id="rr-pct">0%</div></div>
+    <div class="stat-box"><div class="stat-label">XP earned</div><div class="stat-val" id="rr-xp">+0</div></div>
+    <div class="stat-box"><div class="stat-label">Total XP</div><div class="stat-val" id="rr-totalxp">0</div></div>
+  </div>
+  <div id="rr-trophy-earned" style="margin:0.75rem 0"></div>
+  <div style="margin-bottom:1rem">
+    <h3 style="font-size:14px;margin-bottom:0.75rem" id="rr-missed-title">Missed this round</h3>
+    <div id="rr-missed"></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn btn-green" id="rr-next-btn" onclick="afterRoundAction()"></button>
+    <button class="btn" onclick="showDash()">back to topics</button>
+  </div>
+</div>
+
+<div id="s-mgintro" class="scr">
+  <div class="mg-wrap">
+    <div style="font-size:48px;margin-bottom:12px" id="mg-intro-icon">🦠</div>
+    <h2 id="mg-intro-title" style="margin-bottom:8px">Mini game!</h2>
+    <p id="mg-intro-desc" style="margin-bottom:1.25rem;max-width:420px;margin-left:auto;margin-right:auto"></p>
+    <button class="btn btn-green" onclick="startMG()" style="margin-right:8px">Let's go!</button>
+    <button class="btn btn-sm" onclick="skipMG()">skip</button>
+  </div>
+</div>
+
+<div id="s-mg" class="scr">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+    <div>
+      <h3 id="mg-title-disp"></h3>
+      <p id="mg-instr" style="font-size:12px;margin-top:2px"></p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="pill pill-green" id="mg-score-disp">Score: 0</span>
+      <span class="pill pill-gray" id="mg-time-disp">⏱ 90s</span>
+      <button class="btn btn-sm" onclick="stopMG()">end</button>
+    </div>
+  </div>
+  <div id="mg-q-box" style="font-size:15px;font-weight:500;color:var(--color-text-primary);padding:12px 16px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:10px;line-height:1.5;border:0.5px solid var(--color-border-tertiary);min-height:52px"></div>
+  <canvas id="mg-canvas" width="640" height="280"></canvas>
+</div>
+
+<div id="s-mgresult" class="scr">
+  <div class="mg-wrap">
+    <div style="font-size:48px;margin-bottom:12px" id="mgr-icon">🎉</div>
+    <h2 id="mgr-title" style="margin-bottom:8px"></h2>
+    <p id="mgr-msg" style="margin-bottom:1.25rem"></p>
+    <div class="stat-row" style="text-align:left;margin-bottom:1.25rem">
+      <div class="stat-box"><div class="stat-label">Score</div><div class="stat-val" id="mgr-score">0</div></div>
+      <div class="stat-box"><div class="stat-label">XP</div><div class="stat-val" id="mgr-xp">+0</div></div>
+      <div class="stat-box"><div class="stat-label">Total XP</div><div class="stat-val" id="mgr-total">0</div></div>
+      <div class="stat-box"><div class="stat-label">Trophies</div><div class="stat-val" id="mgr-trophies">0</div></div>
+    </div>
+    <div id="mgr-trophy" style="margin-bottom:1.25rem"></div>
+    <button class="btn btn-green" onclick="continueAfterMG()">Continue to next round →</button>
+  </div>
+</div>
+
+<div id="s-topic-complete" class="scr">
+  <div style="text-align:center;padding:1rem 0">
+    <div style="font-size:56px;margin-bottom:12px">🏆</div>
+    <h1 style="margin-bottom:8px">Topic 1 Complete!</h1>
+    <p style="margin-bottom:1.5rem">You've worked through all 5 rounds and 100 questions. Outstanding effort!</p>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="stat-label">Total correct</div><div class="stat-val" id="tc-correct">0</div></div>
+    <div class="stat-box"><div class="stat-label">Accuracy</div><div class="stat-val" id="tc-acc">0%</div></div>
+    <div class="stat-box"><div class="stat-label">Total XP</div><div class="stat-val" id="tc-xp">0</div></div>
+    <div class="stat-box"><div class="stat-label">Trophies</div><div class="stat-val" id="tc-trophies">0/10</div></div>
+  </div>
+  <div id="tc-new-trophies" style="margin:1rem 0"></div>
+  <h3 style="margin-bottom:1rem">Your trophy cabinet</h3>
+  <div class="trophy-grid" id="tc-trophy-grid"></div>
+  <div style="display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap">
+    <button class="btn btn-green" onclick="showDash()">back to topics</button>
+    <button class="btn btn-purple" onclick="showTrophies()">full cabinet</button>
+  </div>
+</div>
+
+<script>
+// ── Storage ──────────────────────────────────────────────────────────────────
+const SK='biorevisev7:';
+function saveU(){try{localStorage.setItem(SK+user,JSON.stringify(ud));}catch(e){}}
+function loadU(u){try{const v=localStorage.getItem(SK+u);return v?JSON.parse(v):null;}catch(e){return null;}}
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const LEVELS=[{n:"Novice",x:0},{n:"Apprentice",x:200},{n:"Explorer",x:500},{n:"Practitioner",x:1000},{n:"Expert",x:2000},{n:"Master",x:3500}];
+const RLABELS=["","Easy recall","Getting precise","Harder choices","Application","Reasoning"];
+const RBADGE=["","rb-1","rb-2","rb-3","rb-4","rb-5"];
+const ACCENTS=["","#1D9E75","#378ADD","#7F77DD","#BA7517","#E24B4A"];
+const PASS=80;
+const MG_SECS=90; // 90 seconds per mini-game
+
+const TROPHIES=[
+  {id:"r1",emoji:"🔬",name:"First steps",hint:"Complete Round 1 with 80%+"},
+  {id:"r2",emoji:"🧫",name:"Getting sharper",hint:"Complete Round 2 with 80%+"},
+  {id:"r3",emoji:"🧬",name:"Knowledge builder",hint:"Complete Round 3 with 80%+"},
+  {id:"r4",emoji:"🔭",name:"Applied thinker",hint:"Complete Round 4 with 80%+"},
+  {id:"r5",emoji:"🏆",name:"Topic 1 master",hint:"Complete all 5 rounds"},
+  {id:"perfect",emoji:"⭐",name:"Perfect round",hint:"Score 100% on any round"},
+  {id:"fire",emoji:"🔥",name:"On fire",hint:"Reach a 3-day streak"},
+  {id:"unlock",emoji:"🔓",name:"Unlocked",hint:"Finish Topic 1"},
+  {id:"gamehero",emoji:"🎮",name:"Game hero",hint:"Score 8+ in a mini game"},
+  {id:"champion",emoji:"🥇",name:"Unit 1 champion",hint:"Complete both topics"}
+];
+
+const MG_QS=[
+  {q:"Which molecule stores energy in cells?",o:["Starch","ATP","Cellulose","Chitin"],a:1},
+  {q:"Fungi cell walls are made of:",o:["Cellulose","Glycogen","Chitin","Peptidoglycan"],a:2},
+  {q:"Which protoctist causes malaria?",o:["Mucor","Yeast","Plasmodium","Pneumococcus"],a:2},
+  {q:"Animals store carbohydrate as:",o:["Starch","Sucrose","Cellulose","Glycogen"],a:3},
+  {q:"What nucleic acid do viruses contain?",o:["Both DNA and RNA","Neither","Only proteins","DNA or RNA — not both"],a:3},
+  {q:"Saprotrophic nutrition is used by:",o:["Plants","Animals","Fungi","Protoctists"],a:2},
+  {q:"Bacteria are described as:",o:["Eukaryotes","Multicellular","Prokaryotes","Autotrophs"],a:2},
+  {q:"HIV causes which disease?",o:["Malaria","Flu","Pneumonia","AIDS"],a:3},
+  {q:"Plant cell walls are made of:",o:["Chitin","Glycogen","Cellulose","Peptidoglycan"],a:2},
+  {q:"Which is a eukaryote?",o:["Lactobacillus","Pneumococcus","E. coli","Amoeba"],a:3},
+  {q:"Yeast is classified as a:",o:["Bacterium","Protoctist","Fungus","Plant"],a:2},
+  {q:"Which has a protein coat and nucleic acid?",o:["Bacterium","Fungus","Virus","Protoctist"],a:2}
+];
+
+const T1=[
+  [{q:"Which is a characteristic of ALL living organisms?",o:["They photosynthesise","They respire","They have cell walls","They live in water"],a:1,f:"All living organisms respire to release energy. Not all photosynthesise, have cell walls or live in water."},{q:"What do living organisms excrete?",o:["Food","Water only","Waste products of metabolism","Oxygen only"],a:2,f:"Excretion is removal of waste products of metabolism such as carbon dioxide and urea."},{q:"Which word describes detecting and responding to environmental changes?",o:["Reproduction","Sensitivity","Excretion","Nutrition"],a:1,f:"Sensitivity (response to surroundings) is one of the eight characteristics of life."},{q:"What type of organism is a mushroom?",o:["Plant","Animal","Fungus","Bacterium"],a:2,f:"Mushrooms are fungi — not plants (no chloroplasts) and not animals."},{q:"Which group is multicellular with cells containing chloroplasts?",o:["Animals","Fungi","Plants","Bacteria"],a:2,f:"Plants are multicellular and their cells contain chloroplasts for photosynthesis."},{q:"What are the thread-like structures forming most fungal bodies called?",o:["Villi","Hyphae","Flagella","Cilia"],a:1,f:"Fungal bodies are made of hyphae, which together form a mycelium."},{q:"Which is a single-celled organism?",o:["Maize","Mushroom","Amoeba","Human"],a:2,f:"Amoeba is a single-celled protoctist. Maize and mushrooms are multicellular."},{q:"Bacteria are prokaryotes. What does this mean?",o:["They are very small","They have no membrane-bound nucleus","They cannot reproduce","They have no cell wall"],a:1,f:"Prokaryotes lack a membrane-bound nucleus — their DNA is free as a circular chromosome."},{q:"Which is NOT a living organism?",o:["Bacterium","Yeast","Virus","Amoeba"],a:2,f:"Viruses are not considered living — no cellular structure and cannot replicate independently."},{q:"What do viruses need to reproduce?",o:["Sunlight","Living host cells","Soil nutrients","Water"],a:1,f:"Viruses can only replicate inside the cells of a living host."},{q:"What disease does Plasmodium cause?",o:["Flu","AIDS","Malaria","Pneumonia"],a:2,f:"Plasmodium is the protoctist responsible for causing malaria."},{q:"Which bacterium is used to make yoghurt?",o:["Pneumococcus","Lactobacillus bulgaricus","Plasmodium","Mucor"],a:1,f:"Lactobacillus bulgaricus is the rod-shaped bacterium used in yoghurt production."},{q:"What material makes up fungal cell walls?",o:["Cellulose","Starch","Chitin","Glycogen"],a:2,f:"Fungal cell walls are made of chitin. Plant cell walls are made of cellulose."},{q:"What material makes up plant cell walls?",o:["Chitin","Glycogen","Peptidoglycan","Cellulose"],a:3,f:"Plant cell walls are cellulose. Fungal = chitin. Bacterial = peptidoglycan."},{q:"How do fungi feed?",o:["By photosynthesis","By swallowing food whole","By secreting enzymes onto food then absorbing the products","By filter feeding"],a:2,f:"Fungi feed saprotrophically — secreting enzymes externally and absorbing digested products."},{q:"What type of nucleic acid do viruses contain?",o:["Both DNA and RNA","Neither","DNA or RNA — not both","Only proteins"],a:2,f:"Viruses contain only one type of nucleic acid — either DNA or RNA, never both."},{q:"Which is an example of a protoctist?",o:["Yeast","Amoeba","Mucor","Pneumococcus"],a:1,f:"Amoeba is a protoctist. Yeast and Mucor are fungi. Pneumococcus is a bacterium."},{q:"Which disease is caused by HIV?",o:["Malaria","Pneumonia","AIDS","Flu"],a:2,f:"HIV causes AIDS. Malaria = Plasmodium. Pneumonia = Pneumococcus."},{q:"Animals store carbohydrate as:",o:["Starch","Sucrose","Cellulose","Glycogen"],a:3,f:"Animals store carbohydrate as glycogen, mainly in liver and muscle cells."},{q:"Which best describes a pathogen?",o:["Any microscopic organism","An organism or particle that causes disease","A type of white blood cell","A beneficial bacterium"],a:1,f:"A pathogen is any organism or particle that causes disease."}],
+  [{q:"Which correctly lists ALL eight characteristics of living organisms?",o:["Nutrition, respiration, excretion, sensitivity, movement, reproduction, growth, photosynthesis","Nutrition, respiration, excretion, sensitivity, movement, homeostasis, reproduction, growth","Nutrition, respiration, excretion, sensitivity, movement, homeostasis, evolution, growth","Nutrition, respiration, digestion, sensitivity, movement, homeostasis, reproduction, growth"],a:1,f:"The eight are: nutrition, respiration, excretion, sensitivity, movement, homeostasis, reproduction, growth. Photosynthesis and digestion are NOT on this list."},{q:"What distinguishes eukaryotic from prokaryotic cells?",o:["Eukaryotic cells are always larger","Eukaryotic cells have a membrane-bound nucleus; prokaryotic do not","Eukaryotic cells have no cell wall; prokaryotic always do","Eukaryotic cells cannot respire"],a:1,f:"The membrane-bound nucleus is the defining feature — present in eukaryotes, absent in prokaryotes."},{q:"How do plants correctly store carbohydrates?",o:["As glycogen in the cytoplasm","As chitin in the cell wall","As starch or sucrose","As fatty acids in organelles"],a:2,f:"Plants store as starch (long-term) or sucrose (transport). Glycogen is the animal and fungal storage carbohydrate."},{q:"Which statement about viruses is correct?",o:["Viruses are the smallest prokaryotic organisms","Viruses have a cellular structure with a cell membrane","Viruses consist of a protein coat containing one type of nucleic acid","Viruses carry out all eight characteristics of life"],a:2,f:"Viruses have a protein coat containing either DNA or RNA — they are not prokaryotes and not living."},{q:"What disease does Pneumococcus cause?",o:["Malaria","AIDS","Influenza","Pneumonia"],a:3,f:"Pneumococcus is the spherical bacterium that causes pneumonia."},{q:"What is the correct term for the mass of hyphae forming a fungal body?",o:["Flagellum","Mycelium","Plasmid","Stroma"],a:1,f:"The mycelium is the network of hyphae forming the main body of most fungi."},{q:"Which organism is both unicellular and eukaryotic?",o:["Lactobacillus","Pneumococcus","Yeast","Tobacco mosaic virus"],a:2,f:"Yeast is a single-celled fungus — eukaryotic. The bacteria are prokaryotes."},{q:"Which feature is shared by bacteria and plant cells?",o:["A membrane-bound nucleus","A cell wall","Chloroplasts","Plasmids"],a:1,f:"Both have cell walls (different materials — peptidoglycan vs cellulose). Bacteria lack nuclei and chloroplasts."},{q:"Tobacco mosaic virus damages plants by:",o:["Digesting cellulose walls","Blocking stomata","Preventing chloroplast formation","Destroying root hair cells"],a:2,f:"TMV prevents chloroplast formation, causing leaf discolouration and reducing photosynthesis."},{q:"Which group feeds by saprotrophic nutrition?",o:["Animals","Plants","Fungi","Protoctists"],a:2,f:"Saprotrophic nutrition — external enzyme secretion and absorption — is characteristic of fungi."},{q:"A student says bacteria are eukaryotes because they have a cell wall. Why is this wrong?",o:["Bacteria do not have cell walls","Having a cell wall does not determine eukaryote status — bacteria lack a membrane-bound nucleus","Bacteria are eukaryotes — the student is correct","Cell walls are only in eukaryotes"],a:1,f:"The defining eukaryote feature is a membrane-bound nucleus, not a cell wall."},{q:"Which correctly pairs an organism with its group?",o:["Mucor — protoctist","Chlorella — fungus","Amoeba — protoctist","Lactobacillus — virus"],a:2,f:"Amoeba is a protoctist. Mucor is a fungus. Chlorella is a plant-like protoctist. Lactobacillus is a bacterium."},{q:"Which correctly describes bacterial cell structure?",o:["Nucleus, plasmids and mitochondria","Circular chromosome, plasmids, cell wall and membrane — no nucleus","Linear chromosomes inside a nucleus","Chloroplasts and cellulose cell wall"],a:1,f:"Bacteria have circular DNA, plasmids, peptidoglycan wall and membrane — no nucleus, no mitochondria."},{q:"Which can be a pathogen?",o:["Only viruses","Only bacteria and viruses","Fungi, bacteria, protoctists and viruses","Only eukaryotic organisms"],a:2,f:"Pathogens can belong to all four groups. Viruses are non-living but are still pathogens."},{q:"Chlorella is plant-like because it:",o:["Has a chitin cell wall","Is multicellular","Contains chloroplasts and photosynthesises","Feeds saprotrophically"],a:2,f:"Chlorella has chloroplasts and photosynthesises — hence plant-like. It is single-celled with no chitin wall."},{q:"How do animals differ from fungi in feeding?",o:["Animals have cell walls; fungi do not","Animals ingest and digest internally; fungi digest externally and absorb","Animals store glycogen; fungi store starch","Animals are unicellular; fungi always multicellular"],a:1,f:"Animals use holozoic (internal) digestion. Fungi use saprotrophic (external) digestion and absorption."},{q:"What shape is Lactobacillus bulgaricus?",o:["Spherical","Spiral","Rod-shaped","Star-shaped"],a:2,f:"Lactobacillus is rod-shaped. Pneumococcus (also in the spec) is spherical."},{q:"Which statement about protoctists is correct?",o:["All have chloroplasts","All are pathogenic","Microscopic single-celled eukaryotes with varied features","Prokaryotes found in pond water"],a:2,f:"Protoctists are microscopic, single-celled eukaryotes — some plant-like, some animal-like, some pathogenic."},{q:"Which two features are unique to plant cells compared to animal cells?",o:["Mitochondria and ribosomes","Cell membrane and nucleus","Chloroplasts and cellulose cell wall","Vacuole and glycogen storage"],a:2,f:"Chloroplasts and cellulose cell walls are plant-specific. Mitochondria, ribosomes, membranes and nuclei are in both."},{q:"Carbohydrate storage — Plant / Animal / Fungus?",o:["Glycogen / Starch / Glycogen","Starch / Glycogen / Starch","Starch / Glycogen / Glycogen","Sucrose / Glycogen / Chitin"],a:2,f:"Plants = starch. Animals = glycogen. Fungi = glycogen. Both animals and fungi store glycogen."}],
+  [{q:"Which correctly distinguishes excretion from egestion?",o:["Excretion removes undigested food; egestion removes metabolic waste","Excretion removes metabolic waste products; egestion removes undigested food","They are different words for the same process","Excretion only in animals; egestion only in plants"],a:1,f:"Excretion removes metabolic waste (CO₂, urea). Egestion removes undigested food — never absorbed into cells."},{q:"A student claims yeast is a protoctist because it is single-celled. Which corrects this?",o:["Yeast is not single-celled — it grows as a mycelium","Yeast is single-celled but is a fungus — chitin walls and glycogen storage","Yeast is a bacterium because it is microscopic","Yeast is a virus because it is not fully living"],a:1,f:"Single-celled status alone does not determine classification. Yeast is a fungus — chitin walls, glycogen storage, saprotrophic nutrition."},{q:"Best reason viruses are NOT classified as living?",o:["They are too small to be seen","They contain no nucleic acids","They cannot carry out any characteristics of life independently","They have a protein coat instead of a cell membrane"],a:2,f:"Viruses cannot independently carry out any characteristics of life — they rely entirely on a host cell."},{q:"Carbohydrate storage — Plant / Animal / Fungus?",o:["Starch / Glycogen / Glycogen","Glycogen / Starch / Sucrose","Sucrose / Glycogen / Starch","Starch / Glycogen / Starch"],a:0,f:"Plants = starch. Animals = glycogen. Fungi = glycogen. Both animals and fungi use glycogen — a common confusion point."},{q:"Which statement about fungi is INCORRECT?",o:["Fungi can be single-celled or multicellular","Fungi have cell walls made of chitin","Fungi are able to carry out photosynthesis","Fungi feed by saprotrophic nutrition"],a:2,f:"Fungi cannot photosynthesise — they have no chloroplasts. This is one of their defining features."},{q:"Cell wall, no nucleus, circular DNA, plasmids. Which group?",o:["Fungi","Protoctists","Bacteria","Plants"],a:2,f:"No nucleus + circular DNA + plasmids = prokaryote = bacterium. The others are all eukaryotes."},{q:"Which statement about Plasmodium is correct?",o:["Plasmodium is a virus causing malaria","Plasmodium is a bacterium spread by mosquitoes","Plasmodium is a protoctist and the pathogen causing malaria","Plasmodium is a fungus with typical hyphal structure"],a:2,f:"Plasmodium is a eukaryotic, single-celled protoctist — the pathogen responsible for malaria."},{q:"Which pair of organisms are BOTH eukaryotes?",o:["Lactobacillus and Pneumococcus","Mucor and Amoeba","Tobacco mosaic virus and Plasmodium","Lactobacillus and Mucor"],a:1,f:"Mucor (fungus) and Amoeba (protoctist) are both eukaryotes. Bacteria are prokaryotes. Viruses are neither."},{q:"How does fungal feeding differ from animal feeding?",o:["Fungi ingest food internally; animals absorb directly","Fungi photosynthesise; animals ingest","Fungi secrete enzymes externally and absorb; animals ingest and digest internally","Both absorb pre-digested nutrients"],a:2,f:"Fungi digest extracellularly (saprotrophic). Animals digest intracellularly (holozoic)."},{q:"Which correctly contrasts bacteria and viruses?",o:["Bacteria are non-living; viruses are living single-celled organisms","Bacteria are prokaryotic cells; viruses are non-cellular particles","Both have a cell membrane","Viruses are larger than bacteria"],a:1,f:"Bacteria are prokaryotic cells with membranes, cytoplasm and walls. Viruses are acellular — smaller, with only protein coat and nucleic acid."},{q:"Which feature distinguishes a fungus from a plant?",o:["It is multicellular","It has a cell wall","Its cell wall is chitin not cellulose","It stores carbohydrates"],a:2,f:"Both are multicellular with cell walls and store carbohydrates. The key difference is wall material: chitin (fungi) vs cellulose (plants)."},{q:"Which is NOT a universal feature of all prokaryotic cells?",o:["Cell membrane","Cytoplasm","Circular chromosome","Plasmids"],a:3,f:"Plasmids are found in many bacteria but not all — not universal. Membrane, cytoplasm and circular DNA are in all prokaryotes."},{q:"How does Amoeba differ from Chlorella despite both being protoctists?",o:["Amoeba has a nucleus; Chlorella does not","Amoeba is multicellular; Chlorella unicellular","Amoeba feeds animal-like by engulfing; Chlorella photosynthesises like a plant","Amoeba has chloroplasts; Chlorella has chitin"],a:2,f:"Amoeba engulfs food (animal-like). Chlorella photosynthesises (plant-like). Both are single-celled eukaryotes."},{q:"Cell wall materials — Plant / Fungus / Bacterium?",o:["Cellulose / Chitin / Peptidoglycan","Chitin / Cellulose / Peptidoglycan","Cellulose / Peptidoglycan / Chitin","Glycogen / Chitin / Cellulose"],a:0,f:"Plants = cellulose. Fungi = chitin. Bacteria = peptidoglycan."},{q:"Multicellular, no photosynthesis, no cell wall, stores glycogen. Which group?",o:["Fungi","Protoctists","Plants","Animals"],a:3,f:"No cell wall + glycogen + multicellular + no photosynthesis = animal. Fungi have chitin walls. Plants have cellulose and chloroplasts."},{q:"Which feature distinguishes an animal from a fungus?",o:["It is multicellular","It has no chloroplasts","It has no cell wall and digests food internally","It stores glycogen"],a:2,f:"Animals have no cell wall and digest food internally (holozoic). Fungi have chitin walls and digest externally."},{q:"How do protoctists differ from bacteria?",o:["Protoctists are prokaryotes; bacteria are eukaryotes","Protoctists have a membrane-bound nucleus; bacteria do not","Both are prokaryotes with circular DNA","Protoctists always have chloroplasts; bacteria never do"],a:1,f:"Protoctists are eukaryotes with a nucleus. Bacteria are prokaryotes without one."},{q:"Hyphae, chitin walls, external digestion. Which group?",o:["Plant","Protoctist","Animal","Fungus"],a:3,f:"Hyphae + chitin walls + external enzyme digestion (saprotrophic) = fungus."},{q:"Which correctly contrasts bacteria and viruses?",o:["Both reproduce independently","Both have cellular structure","Bacteria are cellular prokaryotes; viruses are acellular and non-living","Both contain DNA and RNA"],a:2,f:"Bacteria are living prokaryotic cells. Viruses are acellular, non-living particles needing a host to replicate."},{q:"All eukaryotes share which single defining feature?",o:["Ability to photosynthesise","Multicellularity","Membrane-bound nucleus","Cell wall presence"],a:2,f:"The membrane-bound nucleus is the one universal feature of all eukaryotes."}],
+  [{q:"Patient's infection doesn't respond to antibiotics. Which pathogen type?",o:["A bacterium","A fungus","A virus","A protoctist"],a:2,f:"Antibiotics target bacterial cell structures. Viruses have no cellular machinery to target, so antibiotics are ineffective."},{q:"Culture grows as white fluffy mass with thread-like structures. Which organism?",o:["Bacteria","Viruses","Protoctists","Fungi"],a:3,f:"Thread-like structures forming a fluffy mass describes a fungal mycelium. Bacteria form smooth colonies."},{q:"Pond water: microscopic organisms, some with chloroplasts, some using pseudopodia, all with nucleus. Which group?",o:["Bacteria","Fungi","Protoctists","Viruses"],a:2,f:"Eukaryotic, microscopic, single-celled. Chlorella (plant-like) and Amoeba (animal-like) are both protoctists."},{q:"Leaf shows patchy yellow-green discolouration; chloroplast development disrupted. Which pathogen?",o:["Plasmodium","Pneumococcus","Tobacco mosaic virus","Lactobacillus"],a:2,f:"Tobacco mosaic virus prevents chloroplast formation, causing characteristic mosaic discolouration."},{q:"To determine eukaryotic vs prokaryotic, which single observation is most useful?",o:["Whether it has a cell wall","Whether it has a membrane-bound nucleus","Whether it is unicellular","Whether it can respire"],a:1,f:"The membrane-bound nucleus is the defining distinction. Cell walls exist in both groups."},{q:"A substance breaks down peptidoglycan in bacteria. What happens?",o:["Bacteria photosynthesise faster","Bacteria lose structural support and likely burst from osmotic pressure","Bacteria immediately form spores","The nucleus is destroyed"],a:1,f:"Peptidoglycan is the bacterial cell wall. Without it, bacteria cannot withstand osmotic pressure and will lyse."},{q:"Doctor says pathogen is non-cellular. What type?",o:["A bacterium","A protoctist","A fungus","A virus"],a:3,f:"Viruses are the only non-cellular pathogens — no cell membrane, cytoplasm or organelles."},{q:"Two multicellular organisms both have cell walls — one photosynthesises, one does not. Which pair?",o:["An animal and a plant","A plant and a fungus","A fungus and a bacterium","A protoctist and a virus"],a:1,f:"Plants = multicellular, cellulose walls, photosynthesise. Fungi = multicellular, chitin walls, cannot photosynthesise."},{q:"Student classifies yeast as protoctist because it is single-celled. The error?",o:["Yeast is multicellular — it is a plant","Being single-celled doesn't make it a protoctist — yeast is a fungus","Yeast is a bacterium because it is microscopic","Yeast is a virus because it is not fully living"],a:1,f:"Yeast is a fungus — chitin walls, glycogen storage, saprotrophic nutrition."},{q:"Biologist finds: circular chromosome, no nucleus, peptidoglycan wall. Conclusion?",o:["Eukaryote — it has a chromosome","Fungus — it has a wall","Prokaryote, most likely a bacterium","Virus — it is very small"],a:2,f:"Circular chromosome + no nucleus + peptidoglycan = prokaryote = bacterium."},{q:"Why can malaria not be caught from sneezing?",o:["Plasmodium is too heavy for air droplets","Plasmodium needs a mosquito vector and doesn't colonise the respiratory system","Malaria is a virus living only in blood","Sneezing destroys Plasmodium"],a:1,f:"Plasmodium requires a mosquito vector — injected during a bite. It cannot spread through respiratory droplets."},{q:"Which bacterium and group is used in yoghurt production?",o:["Pneumococcus — spherical pathogen","Plasmodium — rod-shaped protoctist","Lactobacillus bulgaricus — rod-shaped bacterium","Mucor — hyphal fungus"],a:2,f:"Lactobacillus bulgaricus is the rod-shaped bacterium used in yoghurt production."},{q:"Why can influenza not be treated with antibiotics?",o:["Influenza contains peptidoglycan antibiotics cannot break down","Antibiotics target bacterial structures that viruses don't have","Antiviral drugs are always stronger","Influenza reproduces in blood where antibiotics can't reach"],a:1,f:"Antibiotics target bacterial structures (peptidoglycan walls, bacterial ribosomes). Viruses have none of these."},{q:"A biologist classifies an organism as a eukaryote. Which observation?",o:["It has a cell wall","It is multicellular","Its cells contain a membrane-bound nucleus","It photosynthesises"],a:2,f:"The membrane-bound nucleus is the defining eukaryote feature."},{q:"Chitin walls, thread-like growth, digests dead leaves externally. Classification?",o:["Plant — grows from soil","Bacterium — microscopic","Fungus — chitin walls and external digestion","Protoctist — single-celled"],a:2,f:"Chitin walls + external enzyme digestion + hyphal growth = fungus."},{q:"Mould grows faster on moist bread. Which life characteristic is most relevant?",o:["Sensitivity","Reproduction","Nutrition — moisture supports enzymatic breakdown of food","Excretion"],a:2,f:"Mould feeds saprotrophically — secreting enzymes to digest bread. Moisture is essential for enzyme activity."},{q:"Patient A responds to antibiotics; Patient B does not. What does this suggest?",o:["Patient A has viral; Patient B bacterial","Patient A has bacterial; Patient B likely viral or fungal","Both have the same infection","Patient B's immune system is weaker"],a:1,f:"Antibiotics work against bacteria not viruses or fungi. Patient A's response suggests bacterial; Patient B's suggests non-bacterial."},{q:"An organism has plasmids. Most likely conclusion?",o:["It must be a virus","It is most likely a prokaryote such as a bacterium","It must be a plant","It is definitely pathogenic"],a:1,f:"Plasmids are small circular DNA molecules found in bacteria. Their presence strongly suggests a prokaryotic organism."},{q:"Plant pathogen has protein coat containing RNA. Which pathogen?",o:["A bacterium such as Pneumococcus","A virus such as tobacco mosaic virus","A protoctist such as Plasmodium","A fungus such as Mucor"],a:1,f:"Protein coat + RNA = virus. TMV contains RNA and causes leaf discolouration by disrupting chloroplast formation."},{q:"Why are fungi classified separately from plants despite both being multicellular with cell walls?",o:["Fungi are smaller than plants","Fungi cannot move; plants can","Fungi have chitin walls and cannot photosynthesise; plants have cellulose walls and chloroplasts","Fungi live in soil; plants live in water"],a:2,f:"Key differences: wall material (chitin vs cellulose) and nutrition method (saprotrophic vs photosynthetic)."}],
+  [{q:"Evaluate: 'Viruses are the simplest form of life.'",o:["Fully correct — viruses show all life characteristics minimally","Incorrect — viruses are not living; they cannot carry out life characteristics independently","Partially correct — alive inside a host but non-living outside","Incorrect — bacteria are simpler than viruses"],a:1,f:"Viruses are not living. They cannot independently respire, excrete, grow, move or maintain homeostasis. They require host machinery entirely."},{q:"Student argues fungi should be classified as plants because both have cell walls and grow in soil. Evaluate this.",o:["Correct — fungi and plants belong to the same kingdom","Weak — habitat and cell wall presence are insufficient; fungi lack chloroplasts and use chitin not cellulose","Strong — shared features outweigh differences","Correct only for multicellular fungi"],a:1,f:"Cell walls and habitat are unreliable criteria. Fungi have chitin walls, cannot photosynthesise, feed saprotrophically and store glycogen — a separate kingdom."},{q:"Best explanation why antibiotics cannot treat viral infections?",o:["Viruses mutate too quickly","Antibiotics target specific bacterial cell structures — viruses lack these entirely","Viruses are too large for antibiotics to penetrate","Antibiotics are only water-soluble"],a:1,f:"Antibiotics target bacterial-specific structures (peptidoglycan walls, bacterial ribosomes). Viruses have no cell wall or organelles — nothing to target."},{q:"Compare bacteria and protoctists in cell structure.",o:["Both are prokaryotes with circular DNA and no nucleus","Bacteria are prokaryotes with no nucleus; protoctists are eukaryotes with a nucleus — both can be unicellular","Both are eukaryotes with similar structures","Bacteria have a nucleus; protoctists do not"],a:1,f:"Bacteria = prokaryotes (no nucleus, circular DNA, often plasmids). Protoctists = eukaryotes (nucleus, linear chromosomes, organelles). Both groups include unicellular organisms."},{q:"New organism: unicellular, nucleus, chloroplasts, cell wall not cellulose. Which group?",o:["Bacterium — microscopic and unicellular","Fungus — it has a cell wall","Plant — it has chloroplasts","Protoctist — eukaryotic, plant-like, unicellular, non-cellulose wall"],a:3,f:"Eukaryotic (nucleus) + plant-like (chloroplasts) + unicellular + non-cellulose wall = rules out true plants. Fits a plant-like protoctist such as Chlorella."},{q:"Deduce from: multicellular, eukaryotic, no chloroplasts, cell wall, external enzyme secretion, stores glycogen.",o:["Plants","Animals","Fungi","Protoctists"],a:2,f:"Multicellular ✓ eukaryotic ✓ no chloroplasts ✓ cell wall (chitin) ✓ saprotrophic ✓ glycogen ✓ — only fungi satisfy all six criteria."},{q:"'All pathogens must be living to cause disease.' Why not fully correct?",o:["Incorrect — Plasmodium is non-living","Not fully correct — viruses such as HIV are non-living yet cause disease (AIDS)","Incorrect — bacteria like Pneumococcus are not living","Fully correct — all pathogens must be alive to replicate"],a:1,f:"HIV is a virus — not considered living. Yet it causes AIDS. Pathogens do not need to be classified as living to cause disease."},{q:"Why is multicellularity alone insufficient to classify as plant, animal or fungus?",o:["Multicellularity is only in prokaryotes","Many protoctists are also multicellular","Multicellularity is shared by plants, animals and fungi — additional features are needed","Multicellularity only evolved once"],a:2,f:"Plants, animals and fungi are all multicellular. You also need: wall material, nutrition method and chloroplast presence to distinguish them."},{q:"Key structural difference between Mucor and Lactobacillus?",o:["Mucor has a membrane-bound nucleus; Lactobacillus does not","Mucor has plasmids; Lactobacillus does not","Lactobacillus has chloroplasts; Mucor does not","Mucor is unicellular; Lactobacillus is multicellular"],a:0,f:"Mucor is a fungus (eukaryote — has a nucleus). Lactobacillus is a bacterium (prokaryote — no nucleus). Most fundamental structural difference."},{q:"Organism has protein coat, RNA, causes plant disease. Student classifies as bacterium. Two errors?",o:["Error 1: plant pathogens cannot be bacteria. Error 2: RNA only in eukaryotes","Error 1: protein coat + RNA = virus not bacterium. Error 2: bacteria are cellular — this organism is not","Error 1: only protoctists have RNA. Error 2: bacteria always have DNA","Error 1: should be a fungus. Error 2: bacteria don't cause plant disease"],a:1,f:"Two errors: (1) Protein coat + nucleic acid = virus. (2) This organism is non-cellular; bacteria are cellular organisms."},{q:"Why is Plasmodium harder to develop drugs against than bacterial pathogens?",o:["Plasmodium is larger — drugs can't penetrate","Plasmodium is eukaryotic — its cells resemble human cells, making selective targeting harder","Plasmodium has a protein coat blocking drugs","Plasmodium is a virus — therefore non-cellular"],a:1,f:"Plasmodium is a eukaryotic protoctist — its cell biology resembles human cells more than bacteria. No equivalent easy drug target exists for eukaryotic parasites."},{q:"'Yeast reproduces by budding → reproduction is a life characteristic → yeast is living.' Evaluate this.",o:["Flawed — yeast is a virus and non-living","Valid and correct — yeast is a living fungus","Partially correct but incomplete — one characteristic alone is insufficient","Incorrect — reproduction is not a characteristic of life"],a:1,f:"The conclusion is correct — yeast is a living fungus. However the reasoning is incomplete: viruses also replicate yet are non-living. Multiple independently performed life characteristics are needed."},{q:"Compare nutritional strategies of plants, animals and fungi.",o:["Plants and fungi both photosynthesise; animals feed by ingestion","Plants = autotrophic; animals = heterotrophic (ingestion); fungi = heterotrophic (external enzyme secretion)","Plants absorb minerals; animals absorb digested food; fungi absorb sunlight","All three obtain organic molecules from the environment"],a:1,f:"Plants = autotrophs. Animals = holozoic heterotrophs. Fungi = saprotrophic heterotrophs. Three distinct strategies."},{q:"Assess: bacteria and viruses are both microorganisms.",o:["Fully correct — both microscopic and classified as microorganisms","Partially correct — bacteria are microorganisms; viruses are acellular particles sometimes placed in a separate category","Incorrect — viruses are larger than bacteria","Incorrect — bacteria are not microorganisms because they have a cell wall"],a:1,f:"Bacteria are true living microorganisms. Viruses are acellular, non-living particles. Many biologists treat viruses separately because they lack cellular structure."},{q:"Deduce: causes disease, transmitted by mosquito, eukaryotic, single-celled.",o:["Tobacco mosaic virus — plant virus","Pneumococcus — bacterial pathogen","Plasmodium — protoctist causing malaria","Mucor — pathogenic fungus"],a:2,f:"Pathogen ✓ mosquito vector ✓ eukaryotic (rules out bacteria and viruses) ✓ single-celled (rules out fungi) ✓ → only Plasmodium satisfies all criteria."},{q:"Best justification for classifying organisms into distinct kingdoms?",o:["Organisms that look similar belong in the same kingdom","Kingdoms reflect fundamental differences in cell structure, nutrition, reproduction and biochemistry","Kingdoms are based on whether organisms are microscopic or visible","Kingdoms are separated by land vs water habitat"],a:1,f:"Classification uses cell structure, nutrition, biochemistry (wall materials, storage carbohydrates). Appearance and habitat alone are unreliable."},{q:"Evaluate: Amoeba and Chlorella must share most features because both are protoctists.",o:["Correct — all protoctists share the same features","Incorrect — protoctists are highly diverse; they share only basic eukaryotic features while differing fundamentally in nutrition and structure","Correct — both unicellular eukaryotes with identical cell structures","Incorrect — Amoeba and Chlorella are not both protoctists"],a:1,f:"Protoctists is one of biology's most diverse groups. Amoeba and Chlorella share only basic features (unicellular, eukaryotic). Their nutrition and organelles are fundamentally different."},{q:"Why can't a patient's immune system defeat viruses just by making more white blood cells?",o:["White blood cells are too large to reach viruses","Viruses replicate inside host cells, making them harder to detect and destroy than extracellular pathogens","Tobacco mosaic virus only infects plants","White blood cells only fight bacterial infections"],a:1,f:"Viruses hide inside host cells. The response to intracellular viruses involves T-cells and interferons — more complex than just producing more white blood cells."},{q:"What does kingdom classification tell us beyond environmental adaptation?",o:["Nothing — classification is only based on habitat","Organisms in the same kingdom share fundamental cell structures and biochemistry reflecting evolutionary relationships","Organisms are classified purely by size","Classification proves all organisms evolved from the same bacterium"],a:1,f:"Kingdoms reflect deep evolutionary relationships based on fundamental biology — cell structure, wall chemistry, storage carbohydrates, nutrition strategy."},{q:"New pathogen: cannot grow in culture alone; protein coat; RNA; causes human disease. What type?",o:["A bacterium — it has RNA and causes disease","A fungus — it only grows in living cells","A virus — cannot grow independently, has protein coat, contains only RNA","A protoctist — eukaryotic and unicellular"],a:2,f:"Three pieces of evidence: (1) Cannot replicate independently. (2) Has a protein coat — defining viral structure. (3) Contains only RNA. All three conclusively identify a virus."}]
+];
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let user=null, ud=null;
+let curRound=0, curQs=[], curIdx=0, sesAnswers=[], sesXP=0, sesCorrect=0;
+let mgType=0, mgScore=0, mgTimer=null, mgAnimFrame=null, mgAnswered=false;
+let pendingTrophies=[], roundPassed=false;
+
+// THE FIX: a single boolean that each game loop checks every frame.
+// Set to false to kill the loop instantly with no race condition.
+let mgLoopActive=false;
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function freshUD(pin){return{pin,xp:0,streak:0,lastDate:'',totalAns:0,totalCorrect:0,t1RoundsDone:0,t1Correct:0,t1Ans:0,trophies:[]};}
+function getLv(xp){let l=0;for(let i=0;i<LEVELS.length;i++)if(xp>=LEVELS[i].x)l=i;return l;}
+function hasTrophy(id){return Array.isArray(ud.trophies)&&ud.trophies.includes(id);}
+function awardTrophy(id){if(!hasTrophy(id)){ud.trophies.push(id);pendingTrophies.push(id);}}
+function updateStreak(){const t=new Date().toDateString(),y=new Date(Date.now()-86400000).toDateString();if(ud.lastDate===t)return;ud.streak=(ud.lastDate===y)?ud.streak+1:1;ud.lastDate=t;}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+// ── Kill mini-game (no race condition) ───────────────────────────────────────
+function killMG(){
+  mgLoopActive=false;           // loop checks this every frame and exits immediately
+  if(mgTimer){clearInterval(mgTimer);mgTimer=null;}
+  if(mgAnimFrame){cancelAnimationFrame(mgAnimFrame);mgAnimFrame=null;}
+  mgAnswered=false;
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+function doLogin(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const p=document.getElementById('lp').value.trim();
+  const e=document.getElementById('lerr');e.textContent='';
+  if(!u||!p){e.textContent='Enter username and PIN.';return;}
+  if(!/^\d{4}$/.test(p)){e.textContent='PIN must be 4 digits.';return;}
+  const data=loadU(u);
+  if(!data){e.textContent='Username not found — use Create Account.';return;}
+  if(data.pin!==p){e.textContent='Wrong PIN.';return;}
+  user=u;ud=data;if(!Array.isArray(ud.trophies))ud.trophies=[];
+  updateStreak();saveU();showDash();
+}
+function doReg(){
+  const u=document.getElementById('lu').value.trim().toLowerCase();
+  const p=document.getElementById('lp').value.trim();
+  const e=document.getElementById('lerr');e.textContent='';
+  if(!u||u.length<3){e.textContent='Username must be 3+ characters.';return;}
+  if(!/^\d{4}$/.test(p)){e.textContent='PIN must be 4 digits.';return;}
+  if(loadU(u)){e.textContent='Username taken — choose another.';return;}
+  user=u;ud=freshUD(p);saveU();updateStreak();showDash();
+}
+function doLogout(){killMG();user=null;ud=null;show('s-login');}
+
+// ── Dashboard ─────────────────────────────────────────────────────────────────
+function showDash(){
+  document.getElementById('d-hello').textContent='Hey '+user.charAt(0).toUpperCase()+user.slice(1)+'!';
+  document.getElementById('d-sub').textContent=ud.streak>1?'🔥 '+ud.streak+' day streak — keep it up!':'Ready to revise?';
+  document.getElementById('d-xp').textContent=ud.xp;
+  document.getElementById('d-streak').textContent=ud.streak+'🔥';
+  document.getElementById('d-trophies').textContent=ud.trophies.length+'/10';
+  document.getElementById('d-acc').textContent=ud.totalAns>0?Math.round(ud.totalCorrect/ud.totalAns*100)+'%':'–';
+  const lv=getLv(ud.xp);
+  document.getElementById('d-level').textContent=LEVELS[lv].n;
+  const nx=lv<LEVELS.length-1?LEVELS[lv+1].x:null;
+  const pv=LEVELS[lv].x;
+  if(nx){document.getElementById('d-xp-bar').style.width=Math.round((ud.xp-pv)/(nx-pv)*100)+'%';document.getElementById('d-xp-frac').textContent=ud.xp+'/'+nx+' XP';document.getElementById('d-xp-label').textContent='Progress to '+LEVELS[lv+1].n;}
+  else{document.getElementById('d-xp-bar').style.width='100%';document.getElementById('d-xp-frac').textContent=ud.xp+' XP — max level!';}
+  const t1p=document.getElementById('t1-pills');
+  t1p.innerHTML=ud.t1RoundsDone>0
+    ?`<span class="pill pill-green">Next: Round ${Math.min(ud.t1RoundsDone+1,5)}</span><span class="pill pill-gray">${ud.t1Ans} answered</span><span class="pill pill-amber">${Math.round(ud.t1Correct/Math.max(ud.t1Ans,1)*100)}% acc</span>`
+    :'<span class="pill pill-gray">Not started yet</span>';
+  document.getElementById('t1-bar').style.width=Math.round(ud.t1RoundsDone/5*100)+'%';
+  show('s-dash');
+}
+function showTrophies(){
+  const grid=document.getElementById('trophy-grid');grid.innerHTML='';
+  TROPHIES.forEach(t=>{const earned=hasTrophy(t.id);const c=document.createElement('div');c.className='trophy-cell'+(earned?' earned':'');c.innerHTML=`<div class="t-emoji">${t.emoji}</div><div class="t-name">${t.name}</div>`;grid.appendChild(c);});
+  document.getElementById('trophy-count-label').textContent=ud.trophies.length+' of 10 earned';
+  document.getElementById('trophy-hints').innerHTML=TROPHIES.map(t=>t.emoji+' '+t.hint).join('<br>');
+  show('s-trophies');
+}
+
+// ── Game flow ─────────────────────────────────────────────────────────────────
+function startGame(){
+  killMG();
+  curRound=ud.t1RoundsDone+1;
+  if(curRound>5){curRound=1;ud.t1RoundsDone=0;ud.t1Correct=0;ud.t1Ans=0;}
+  pendingTrophies=[];
+  beginRound();
+}
+
+function beginRound(){
+  killMG(); // always kill before starting a round
+  if(curRound>5){showTopicComplete();return;}
+  curQs=shuffle(T1[curRound-1]);
+  curIdx=0;sesAnswers=new Array(curQs.length).fill(undefined);sesCorrect=0;sesXP=0;
+  const rb=document.getElementById('qhud-round-badge');
+  rb.className='round-badge '+RBADGE[curRound];
+  rb.textContent='Round '+curRound+' · '+RLABELS[curRound];
+  document.getElementById('qhud-xp').textContent='XP: '+ud.xp;
+  document.getElementById('qhud-streak').textContent='🔥 '+ud.streak;
+  document.getElementById('q-prog').style.background=ACCENTS[curRound];
+  show('s-quiz');
+  renderQ();
+}
+
+function renderQ(){
+  const q=curQs[curIdx];const ua=sesAnswers[curIdx];const answered=ua!==undefined;
+  const done=sesAnswers.filter(a=>a!==undefined).length;
+  document.getElementById('q-prog').style.width=Math.round(done/curQs.length*100)+'%';
+  document.getElementById('q-count').textContent=(curIdx+1)+'/'+curQs.length;
+  document.getElementById('q-prev').disabled=curIdx===0;
+  document.getElementById('q-next').disabled=curIdx===curQs.length-1;
+  const s=calcStreak();
+  document.getElementById('streak-wrap').innerHTML=(s>=3&&answered&&ua===q.a)?`<div class="streak-banner">🔥 ${s} in a row! Keep going!</div>`:'';
+  const ltrs=['A','B','C','D'];
+  let opts='';
+  q.o.forEach((opt,i)=>{
+    let cls='opt-btn opt-'+ltrs[i];
+    if(answered){if(i===q.a)cls+=' correct';else if(i===ua)cls+=' incorrect';}
+    opts+=`<button class="${cls}" data-pick="${i}" ${answered?'disabled':''}><span class="opt-letter">${ltrs[i]}</span><span class="opt-text">${opt}</span></button>`;
+  });
+  const fb=answered?`<div class="fb-box ${ua===q.a?'fb-ok':'fb-no'}">${ua===q.a?'✓ Correct! ':'✗ Incorrect. '}${q.f}</div>`:'';
+  document.getElementById('q-area').innerHTML=`<div class="q-wrap"><div class="q-accent" style="background:${ACCENTS[curRound]}"></div><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px;padding-left:8px">Q${curIdx+1} of ${curQs.length} · <span style="color:${ACCENTS[curRound]};font-weight:500">${RLABELS[curRound]}</span></div><div class="q-text">${q.q}</div><div class="opts-grid">${opts}</div>${fb}</div>`;
+  if(!answered){
+    document.querySelectorAll('#q-area [data-pick]').forEach(btn=>{
+      btn.addEventListener('click',()=>pick(parseInt(btn.dataset.pick)));
+    });
+  }
+}
+
+function calcStreak(){let s=0;for(let i=sesAnswers.length-1;i>=0;i--){if(sesAnswers[i]===undefined)break;if(sesAnswers[i]===curQs[i].a)s++;else break;}return s;}
+
+function pick(i){
+  if(sesAnswers[curIdx]!==undefined)return;
+  sesAnswers[curIdx]=i;
+  const q=curQs[curIdx];const ok=i===q.a;
+  let xp=ok?10:0;const s=calcStreak();if(ok&&s>0&&s%3===0)xp+=5;
+  if(ok){sesCorrect++;sesXP+=xp;ud.xp+=xp;}
+  ud.totalAns++;ud.totalCorrect+=ok?1:0;ud.t1Ans++;ud.t1Correct+=ok?1:0;
+  document.getElementById('qhud-xp').textContent='XP: '+ud.xp;
+  saveU();renderQ();
+  if(sesAnswers.every(a=>a!==undefined))setTimeout(finishRound,800);
+}
+function qNav(d){curIdx=Math.max(0,Math.min(curQs.length-1,curIdx+d));renderQ();}
+function exitToD(){killMG();saveU();showDash();}
+
+function finishRound(){
+  const pct=Math.round(sesCorrect/curQs.length*100);
+  roundPassed=pct>=PASS;
+  if(ud.streak>=3)awardTrophy('fire');
+  if(pct===100)awardTrophy('perfect');
+  if(roundPassed){
+    awardTrophy(['r1','r2','r3','r4','r5'][curRound-1]);
+    ud.t1RoundsDone=Math.max(ud.t1RoundsDone,curRound);
+  }
+  saveU();
+  document.getElementById('rr-emoji').textContent=pct>=80?'🎯':pct>=60?'👍':'📚';
+  document.getElementById('rr-title').textContent='Round '+curRound+' — '+RLABELS[curRound];
+  document.getElementById('rr-score').textContent=sesCorrect+'/'+curQs.length+' correct — '+pct+'%';
+  document.getElementById('rr-score').style.color=roundPassed?'#1D9E75':'#A32D2D';
+  document.getElementById('rr-msg').textContent=roundPassed?(pct===100?'Perfect round! 🌟':pct>=90?'Excellent work.':'Good — you can move on.'):'Review the feedback below, then try again.';
+  const gd=document.getElementById('rr-gate');
+  if(!roundPassed){gd.style.display='block';document.getElementById('rr-gate-msg').textContent='You scored '+pct+'%. You need '+PASS+'%+ to unlock '+(curRound<5?'Round '+(curRound+1):'Topic 1 completion')+'. Have another go!';}
+  else gd.style.display='none';
+  document.getElementById('rr-correct').textContent=sesCorrect;
+  document.getElementById('rr-pct').textContent=pct+'%';
+  document.getElementById('rr-xp').textContent='+'+sesXP;
+  document.getElementById('rr-totalxp').textContent=ud.xp;
+  const td=document.getElementById('rr-trophy-earned');
+  if(pendingTrophies.length>0){const t=TROPHIES.find(x=>x.id===pendingTrophies[0]);td.innerHTML=t?`<div style="display:inline-flex;align-items:center;gap:10px;padding:10px 16px;background:#FAEEDA;border:0.5px solid #BA7517;border-radius:var(--border-radius-lg)"><span style="font-size:28px">${t.emoji}</span><div><div style="font-size:13px;font-weight:500;color:#633806">Trophy unlocked!</div><div style="font-size:12px;color:#854F0B">${t.name}</div></div></div>`:'';
+  }else td.innerHTML='';
+  const nb=document.getElementById('rr-next-btn');
+  if(!roundPassed){nb.textContent='Try Round '+curRound+' again →';nb.className='btn btn-amber';}
+  else if(curRound===5){nb.textContent='Finish topic →';nb.className='btn btn-green';}
+  else{nb.textContent='Mini game, then Round '+(curRound+1)+' →';nb.className='btn btn-green';}
+  const missed=curQs.filter((_,i)=>sesAnswers[i]!==undefined&&sesAnswers[i]!==curQs[i].a);
+  document.getElementById('rr-missed-title').textContent=missed.length>0?'Review your mistakes ('+missed.length+')':'No mistakes this round!';
+  document.getElementById('rr-missed').innerHTML=missed.length===0?'<p style="color:var(--color-text-secondary);font-size:13px">Clean sheet!</p>':missed.map(q=>`<div style="margin-bottom:10px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md)"><div style="font-size:13px;color:var(--color-text-primary);margin-bottom:6px">${q.q}</div><div style="font-size:12px;padding:5px 10px;background:#E1F5EE;border-radius:6px;color:#085041;margin-bottom:4px">✓ ${q.o[q.a]}</div><div style="font-size:12px;color:var(--color-text-secondary)">${q.f}</div></div>`).join('');
+  show('s-round-result');
+}
+
+function afterRoundAction(){
+  if(!roundPassed){pendingTrophies=[];beginRound();return;}
+  if(curRound===5){showTopicComplete();return;}
+  showMGIntro();
+}
+
+function showMGIntro(){
+  mgType=curRound%2===0?1:0;
+  if(mgType===0){
+    document.getElementById('mg-intro-icon').textContent='🦠';
+    document.getElementById('mg-intro-title').textContent='Cell Catcher!';
+    document.getElementById('mg-intro-desc').textContent='Cells are falling — read the question above the canvas, then click the correct cell. You have 90 seconds!';
+  }else{
+    document.getElementById('mg-intro-icon').textContent='🚢';
+    document.getElementById('mg-intro-title').textContent='Submarine Dodge!';
+    document.getElementById('mg-intro-desc').textContent='Move your mouse up and down to steer the sub. Read the question above, then navigate into the correct answer panel. All panels are the same colour — you must read! 90 seconds.';
+  }
+  show('s-mgintro');
+}
+
+function skipMG(){killMG();pendingTrophies=[];curRound++;beginRound();}
+
+function startMG(){
+  killMG(); // kill any previous game first
+  show('s-mg');
+  mgScore=0;mgAnswered=false;
+  mgLoopActive=true; // enable the new loop
+  document.getElementById('mg-score-disp').textContent='Score: 0';
+  document.getElementById('mg-time-disp').textContent='⏱ '+MG_SECS+'s';
+  if(mgType===0)runCellCatcher();else runSubDodge();
+}
+
+// stopMG is called from the "end" button — leads to result screen
+function stopMG(){
+  killMG();
+  showMGResult();
+}
+
+// endMG is called when timer runs out
+function endMG(){
+  killMG();
+  showMGResult();
+}
+
+function showMGResult(){
+  const xpE=mgScore*5;ud.xp+=xpE;
+  if(mgScore>=8)awardTrophy('gamehero');
+  saveU();
+  document.getElementById('mgr-icon').textContent=mgScore>=8?'🏆':mgScore>=5?'🎉':mgScore>=3?'👍':'📚';
+  document.getElementById('mgr-title').textContent=mgScore>=8?'Game hero!':mgScore>=5?'Great work!':mgScore>=3?'Good effort!':'Keep practising!';
+  document.getElementById('mgr-msg').textContent='You scored '+mgScore+'/12. +'+xpE+' XP earned!';
+  document.getElementById('mgr-score').textContent=mgScore+'/12';
+  document.getElementById('mgr-xp').textContent='+'+xpE;
+  document.getElementById('mgr-total').textContent=ud.xp;
+  document.getElementById('mgr-trophies').textContent=ud.trophies.length;
+  const td=document.getElementById('mgr-trophy');
+  if(pendingTrophies.includes('gamehero')){const t=TROPHIES.find(x=>x.id==='gamehero');td.innerHTML=`<div style="display:inline-flex;align-items:center;gap:10px;padding:10px 16px;background:#FAEEDA;border:0.5px solid #BA7517;border-radius:var(--border-radius-lg)"><span style="font-size:28px">${t.emoji}</span><div><div style="font-size:13px;font-weight:500;color:#633806">Trophy unlocked!</div><div style="font-size:12px;color:#854F0B">${t.name}</div></div></div>`;}else td.innerHTML='';
+  show('s-mgresult');
+}
+
+function continueAfterMG(){
+  killMG(); // belt and braces
+  pendingTrophies=[];
+  curRound++;
+  beginRound(); // beginRound also calls killMG() so doubly safe
+}
+
+// ── Cell Catcher ──────────────────────────────────────────────────────────────
+function runCellCatcher(){
+  const cv=document.getElementById('mg-canvas');
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const myLoop=++mgAnimFrame; // not actually used, but mgLoopActive is the guard
+  const qs=shuffle(MG_QS);let qi=0,timeLeft=MG_SECS;
+  document.getElementById('mg-title-disp').textContent='Cell Catcher';
+  document.getElementById('mg-instr').textContent='Click the falling cell with the correct answer';
+  const COLS=['#E6F1FB','#EEEDFE','#E1F5EE','#FAEEDA'];
+  const STKS=['#378ADD','#7F77DD','#1D9E75','#BA7517'];
+  let cells=[];
+  function setQ(){
+    const q=qs[qi%qs.length];
+    document.getElementById('mg-q-box').textContent=q.q;
+    cells=[];
+    shuffle(q.o.map((txt,i)=>({txt,correct:i===q.a}))).forEach((op,i)=>{
+      cells.push({x:80+i*(W-140)/3,y:-70-i*50,r:40,txt:op.txt,correct:op.correct,col:COLS[i],stk:STKS[i],speed:0.7+Math.random()*0.4,hit:false,flash:null,ft:0});
+    });
+  }
+  setQ();
+  mgTimer=setInterval(()=>{
+    if(!mgLoopActive)return;
+    timeLeft--;
+    document.getElementById('mg-time-disp').textContent='⏱ '+timeLeft+'s';
+    if(timeLeft<=0)endMG();
+  },1000);
+  cv.addEventListener('click',function onClick(e){
+    if(!mgLoopActive){cv.removeEventListener('click',onClick);return;}
+    if(mgAnswered)return;
+    const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(W/r.width),my=(e.clientY-r.top)*(H/r.height);
+    cells.forEach(c=>{
+      if(c.hit)return;
+      if((mx-c.x)**2+(my-c.y)**2<c.r*c.r){
+        c.hit=true;mgAnswered=true;c.flash=c.correct?'#1D9E75':'#E24B4A';c.ft=30;
+        if(c.correct){mgScore++;document.getElementById('mg-score-disp').textContent='Score: '+mgScore;}
+        setTimeout(()=>{if(!mgLoopActive)return;mgAnswered=false;qi++;setQ();},900);
+      }
+    });
+  });
+  function loop(){
+    if(!mgLoopActive)return; // THE FIX: instant exit, no race condition
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='#F1EFE8';ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle='rgba(0,0,0,0.05)';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for(let y=0;y<H;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+    cells.forEach(c=>{
+      if(!c.hit)c.y+=c.speed;
+      if(c.ft>0)c.ft--;else c.flash=null;
+      ctx.beginPath();ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+      ctx.fillStyle=c.flash||c.col;ctx.fill();
+      ctx.strokeStyle=c.flash||c.stk;ctx.lineWidth=2.5;ctx.stroke();
+      ctx.fillStyle='#2C2C2A';ctx.font='bold 11px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      const w=c.txt.split(' ');
+      if(w.length<=2)ctx.fillText(c.txt,c.x,c.y);
+      else if(w.length<=4){ctx.fillText(w.slice(0,2).join(' '),c.x,c.y-8);ctx.fillText(w.slice(2).join(' '),c.x,c.y+8);}
+      else{ctx.fillText(w.slice(0,2).join(' '),c.x,c.y-14);ctx.fillText(w.slice(2,4).join(' '),c.x,c.y);ctx.fillText(w.slice(4).join(' '),c.x,c.y+14);}
+      if(c.y>H+70&&!c.hit){c.y=-80;c.hit=false;}
+    });
+    mgAnimFrame=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Submarine Dodge ───────────────────────────────────────────────────────────
+function runSubDodge(){
+  const cv=document.getElementById('mg-canvas');
+  const ctx=cv.getContext('2d'),W=cv.width,H=cv.height;
+  const qs=shuffle(MG_QS);let qi=0,timeLeft=MG_SECS,frameN=0,subY=H/2,targetY=H/2;
+  let obs=[];
+  document.getElementById('mg-title-disp').textContent='Submarine Dodge';
+  document.getElementById('mg-instr').textContent='Move mouse up/down — read the question above, steer into the correct answer panel';
+  function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
+  function setQ(){
+    const q=qs[qi%qs.length];
+    document.getElementById('mg-q-box').textContent=q.q;
+    const yS=[38,95,155,215];
+    shuffle(q.o.map((txt,i)=>({txt,correct:i===q.a}))).forEach((op,i)=>{
+      obs.push({x:W+40,y:yS[i],w:112,h:40,txt:op.txt,correct:op.correct,speed:1.4,hit:false,flash:null,ft:0});
+    });
+  }
+  setQ();
+  cv.addEventListener('mousemove',e=>{if(!mgLoopActive)return;const r=cv.getBoundingClientRect();targetY=(e.clientY-r.top)*(H/r.height);});
+  cv.addEventListener('touchmove',e=>{if(!mgLoopActive)return;e.preventDefault();const r=cv.getBoundingClientRect();targetY=(e.touches[0].clientY-r.top)*(H/r.height);},{passive:false});
+  mgTimer=setInterval(()=>{
+    if(!mgLoopActive)return;
+    timeLeft--;
+    document.getElementById('mg-time-disp').textContent='⏱ '+timeLeft+'s';
+    if(timeLeft<=0)endMG();
+  },1000);
+  function drawSub(x,y){
+    ctx.fillStyle='#378ADD';ctx.beginPath();ctx.ellipse(x,y,32,13,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#B5D4F4';ctx.fillRect(x-5,y-13,13,9);
+    ctx.fillStyle='rgba(255,255,255,0.4)';ctx.beginPath();ctx.arc(x+10,y-1,5,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#B5D4F4';ctx.beginPath();ctx.moveTo(x+32,y);ctx.lineTo(x+43,y-9);ctx.lineTo(x+43,y+9);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#85B7EB';ctx.beginPath();ctx.ellipse(x-32,y,4,11,frameN*0.1,0,Math.PI*2);ctx.fill();
+  }
+  function loop(){
+    if(!mgLoopActive)return; // THE FIX
+    ctx.clearRect(0,0,W,H);ctx.fillStyle='#042C53';ctx.fillRect(0,0,W,H);
+    for(let i=0;i<12;i++){ctx.fillStyle='rgba(181,212,244,0.09)';ctx.beginPath();ctx.arc(((i*163+frameN*0.3)%W),((i*79+frameN*0.45)%H),1+i%3,0,Math.PI*2);ctx.fill();}
+    ctx.strokeStyle='rgba(181,212,244,0.05)';ctx.lineWidth=1;
+    for(let y=0;y<H;y+=55){ctx.beginPath();ctx.moveTo(0,y+Math.sin(frameN*0.016)*10);ctx.lineTo(W,y+Math.sin(frameN*0.016+1.2)*10);ctx.stroke();}
+    subY+=(targetY-subY)*0.08;subY=Math.max(18,Math.min(H-18,subY));
+    obs.forEach(ob=>{
+      if(!ob.hit)ob.x-=ob.speed;
+      if(ob.ft>0){ob.ft--;if(ob.ft===0)ob.flash=null;}
+      ctx.fillStyle=ob.flash||'#185FA5';rr(ctx,ob.x-ob.w/2,ob.y-ob.h/2,ob.w,ob.h,8);ctx.fill();
+      ctx.strokeStyle=ob.flash||'#378ADD';ctx.lineWidth=1.5;rr(ctx,ob.x-ob.w/2,ob.y-ob.h/2,ob.w,ob.h,8);ctx.stroke();
+      ctx.fillStyle='#E6F1FB';ctx.font='11px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+      const w=ob.txt.split(' ');
+      if(w.length<=2)ctx.fillText(ob.txt,ob.x,ob.y);
+      else if(w.length<=4){ctx.fillText(w.slice(0,2).join(' '),ob.x,ob.y-7);ctx.fillText(w.slice(2).join(' '),ob.x,ob.y+7);}
+      else{ctx.fillText(w.slice(0,2).join(' '),ob.x,ob.y-12);ctx.fillText(w.slice(2,4).join(' '),ob.x,ob.y);ctx.fillText(w.slice(4).join(' '),ob.x,ob.y+12);}
+      if(!ob.hit&&!mgAnswered){
+        const dx=Math.abs(ob.x-168),dy=Math.abs(ob.y-subY);
+        if(dx<50&&dy<26){
+          ob.hit=true;mgAnswered=true;ob.flash=ob.correct?'#1D9E75':'#E24B4A';ob.ft=25;
+          if(ob.correct){mgScore++;document.getElementById('mg-score-disp').textContent='Score: '+mgScore;}
+          setTimeout(()=>{if(!mgLoopActive)return;mgAnswered=false;obs=obs.filter(o=>!o.hit||o.ft>0);qi++;setQ();},900);
+        }
+      }
+      if(ob.x<-80&&!ob.hit)ob.hit=true;
+    });
+    obs=obs.filter(o=>!o.hit||o.ft>0);
+    drawSub(168,subY);frameN++;
+    mgAnimFrame=requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ── Topic complete ────────────────────────────────────────────────────────────
+function showTopicComplete(){
+  killMG();
+  awardTrophy('r5');awardTrophy('unlock');saveU();
+  document.getElementById('tc-correct').textContent=ud.t1Correct;
+  document.getElementById('tc-acc').textContent=(ud.t1Ans>0?Math.round(ud.t1Correct/ud.t1Ans*100):0)+'%';
+  document.getElementById('tc-xp').textContent=ud.xp;
+  document.getElementById('tc-trophies').textContent=ud.trophies.length+'/10';
+  const newTs=TROPHIES.filter(t=>pendingTrophies.includes(t.id));
+  document.getElementById('tc-new-trophies').innerHTML=newTs.length>0?'<div style="margin-bottom:8px;font-size:13px;font-weight:500;color:var(--color-text-primary)">Trophies earned this session:</div><div style="display:flex;gap:10px;flex-wrap:wrap">'+newTs.map(t=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#FAEEDA;border:0.5px solid #BA7517;border-radius:var(--border-radius-md)"><span style="font-size:22px">${t.emoji}</span><span style="font-size:12px;color:#633806;font-weight:500">${t.name}</span></div>`).join('')+'</div>':'';
+  const grid=document.getElementById('tc-trophy-grid');grid.innerHTML='';
+  TROPHIES.forEach(t=>{const earned=hasTrophy(t.id);const c=document.createElement('div');c.className='trophy-cell'+(earned?' earned':'');c.innerHTML=`<div class="t-emoji">${t.emoji}</div><div class="t-name">${t.name}</div>`;grid.appendChild(c);});
+  show('s-topic-complete');
+}
+
+window.showDash=showDash;window.showTrophies=showTrophies;
+</script>
